@@ -19,7 +19,7 @@ public class Client {
 
     public static void main(String[] args) {
         int port = 8000;
-        String host = "localhost";
+        String host = "ec2-35-166-23-110.us-west-2.compute.amazonaws.com";
         DataInputStream in;
         DataOutputStream out;
         Socket socket;
