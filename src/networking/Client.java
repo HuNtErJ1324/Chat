@@ -5,11 +5,9 @@
  */
 package networking;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -24,20 +22,18 @@ public class Client {
         String host = "localhost";
         DataInputStream in;
         DataOutputStream out;
-        Socket socket = null;
+        Socket socket;
         Scanner input = new Scanner(System.in);
         String text = "";
 
         try {
             socket = new Socket(host, port);
             System.out.println("Client connected to port " + port);
-            in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            while (!text.equals("end")) {
+            while (!text.equalsIgnoreCase("end")) {
                 text = input.nextLine();
                 out.writeUTF(text);
                 out.flush();
-                System.out.println(in.readUTF());
             }
             socket.close();
 
