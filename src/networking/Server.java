@@ -20,12 +20,10 @@ public class Server {
 
     public static void main(String[] args) {
         int port = 8000;
-        DataInputStream in = null;
         DataOutputStream out;
         ServerSocket server;
         Socket socket;
         Scanner input = new Scanner(System.in);
-        String text = "";
         Thread t1;
         Read r1;
 
@@ -60,14 +58,13 @@ public class Server {
         public void run() {
             try {
                 in = new DataInputStream(socket.getInputStream());
-                System.out.println("bruh");
                 String input;
                 do {
                     input = in.readUTF();
                     System.out.println(input);
                 } while (!input.equalsIgnoreCase("end"));
             } catch (IOException e) {
-                System.out.println("oopsies");
+                System.out.println("oopsies2");
             }
         }
     }

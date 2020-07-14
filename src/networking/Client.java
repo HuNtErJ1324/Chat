@@ -8,6 +8,7 @@ package networking;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -19,7 +20,7 @@ public class Client {
 
     public static void main(String[] args) {
         int port = 8000;
-        String host = "ec2-35-166-23-110.us-west-2.compute.amazonaws.com";
+        String host = "100.20.240.236";
         DataInputStream in;
         DataOutputStream out;
         Socket socket;
