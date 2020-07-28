@@ -46,7 +46,7 @@ public class Client {
 
     public void login() {
         try {
-            in.readUTF();
+            System.out.print(in.readUTF());
             int num = input.nextInt();
             out.writeInt(num);
             out.flush();
