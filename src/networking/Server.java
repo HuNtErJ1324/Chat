@@ -186,6 +186,7 @@ public class Server implements Serializable { //serialize everything except clie
         public void login() {
             try {
                 out.writeUTF("Are you a \n1)Returning user\n2)New user");
+                out.flush();
                 int d = in.readInt();
                 //returning user
                 if (d == 1) {

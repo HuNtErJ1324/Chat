@@ -19,6 +19,8 @@ public class Client {
     final static String menu = "Choose option\n    1)Chats\n    2)Join\n    3)Create\n    4)Logout\n    5)Help";
     int port = 8000;
     static String host = "100.20.240.236";
+    //static String host = "localhost";
+    //100.20.240.236
     DataInputStream in;
     DataOutputStream out;
     Socket socket;
