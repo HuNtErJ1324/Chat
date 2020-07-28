@@ -5,18 +5,36 @@
  */
 package networking;
 
+import java.io.*;
 import java.net.Socket;
+import java.util.*;
 
 /**
  *
  * @author peanu
  */
-public class User {
-    String name;
+public class User implements Serializable{ 
+    String username;
+    String password;
     Socket socket;
+    //chats that the user has connected to
+    ArrayList<Chat> chats;
     
-    User(String name) {
-        this.name = name;
+    User() {
+        username = "";
+        password = "";
+        socket = null;
+        chats = null;
+    }
+    
+    User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+    
+    User(String username, Socket socket) {
+        this.username = username;
+        this.socket = socket;
     }
     
     //to user
@@ -29,11 +47,28 @@ public class User {
         return socket;
     }
     
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
     
-    public int getPass() {
-        return pass;
+    public boolean checkPassword(String password) {
+        return this.password.equals(password);
+    }
+    //set socket
+    
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public void addChat(Chat chat) {
+        chats.add(chat);
     }
 }
