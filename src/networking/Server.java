@@ -191,7 +191,9 @@ public class Server implements Serializable { //serialize everything except clie
                 //returning user
                 if (d == 1) {
                     String username = in.readUTF();
+                    System.out.println("Username accepted");
                     String password = in.readUTF();
+                    System.out.println("Password accepted");
                     if (checkUser(username, password)) {
                         out.writeUTF("Welcome " + username + "!");
                         out.flush();
@@ -205,6 +207,7 @@ public class Server implements Serializable { //serialize everything except clie
                 else if (d == 2) {
                     User user;
                     String username = in.readUTF();
+                    
                     String password = in.readUTF();
                     user = new User(username, password);
                     users.add(user);
