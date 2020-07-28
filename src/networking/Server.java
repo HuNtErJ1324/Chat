@@ -15,7 +15,7 @@ import networking.*;
  *
  * @author peanu
  */
-public class Server implements Serializable{ //serialize everything except client
+public class Server implements Serializable { //serialize everything except client
 
     //users that use server
     static ArrayList<User> users;
@@ -52,7 +52,7 @@ public class Server implements Serializable{ //serialize everything except clien
         //for loop scans through chats 
         File chatDirectory = new File("src/chats");
         File[] chatFileNames = chatDirectory.listFiles();
-        for(int i = 0; i < chatFileNames.length; i++) {
+        for (int i = 0; i < chatFileNames.length; i++) {
             chats.add(Chat.load(chatFileNames[i].getName()));
         }
     }
@@ -78,27 +78,27 @@ public class Server implements Serializable{ //serialize everything except clien
             System.out.println("checkUser error");
         }
     }
-    
+
     //get chat using chat name
     public static Chat getChat(String name) {
-        for(int i = 0; i < chats.size(); i++) {
+        for (int i = 0; i < chats.size(); i++) {
             if (chats.get(i).getName().equals(name)) {
-                return chats.get(i); 
+                return chats.get(i);
             }
         }
         //if it gets here code has turned evil
         return null;
     }
-    
+
     public static User getUser(String username) {
-        for(int i = 0; i < users.size(); i++) {
-            if(users.get(i).getUsername().equals(username)) {
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getUsername().equals(username)) {
                 return users.get(i);
             }
         }
         return null;
     }
-    
+
     //serialize everything
     //credit to: geeksforgeeks.org/serialization-in-java/
     public void save() {
@@ -115,9 +115,9 @@ public class Server implements Serializable{ //serialize everything except clien
             System.out.println("IOException is caught");
         }
     }
-    
+
     public static Server load() {
-         Server server = null;
+        Server server = null;
         try {
             // Reading the object from a file 
             FileInputStream file = new FileInputStream("Server.ser");
@@ -134,7 +134,7 @@ public class Server implements Serializable{ //serialize everything except clien
         }
         return server;
     }
-    
+
     private static class Read implements Runnable {
 
         Chat chat;
@@ -150,34 +150,36 @@ public class Server implements Serializable{ //serialize everything except clien
 
         @Override
         public void run() {
-            login();
-            //display menu
             try {
+                out = new DataOutputStream(socket.getOutputStream());
+                in = new DataInputStream(socket.getInputStream());
+                login();
                 int option = in.readInt();
+                //display menu
                 switch (option) {
-                    case 1 : 
+                    case 1:
                         //list of chats
                         break;
-                    case 2 : 
+                    case 2:
                         //join
                         break;
-                    case 3 :
+                    case 3:
                         //create
                         break;
-                    case 4 :
+                    case 4:
                         //logout
                         break;
-                    case 5 :
+                    case 5:
                         //help
                         break;
                 }
-            } catch(IOException e) {
+            } catch (IOException e) {
                 System.out.println("Run error");
             }
         }
-        
+
         public void listChats() {
-            
+
         }
 
         //login 
@@ -211,7 +213,7 @@ public class Server implements Serializable{ //serialize everything except clien
                 System.out.println("login errror");
             }
         }
-        
+
         //add user
         public void addUser(User user) {
             users.add(user);
@@ -219,8 +221,8 @@ public class Server implements Serializable{ //serialize everything except clien
 
         //check username ArrayList
         public boolean checkUser(String username, String password) {
-            for(int i = 0; i < users.size(); i++) {
-                if(users.get(i).getUsername().equals(username)) {
+            for (int i = 0; i < users.size(); i++) {
+                if (users.get(i).getUsername().equals(username)) {
                     return users.get(i).checkPassword(password);
                 }
             }
