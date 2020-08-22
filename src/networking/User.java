@@ -13,62 +13,68 @@ import java.util.*;
  *
  * @author peanu
  */
-public class User implements Serializable{ 
+public class User implements Serializable {
+
     String username;
     String password;
-    Socket socket;
-    //chats that the user has connected to
-    ArrayList<Chat> chats;
-    
+    transient Socket socket;
+    //chats that the user has at least once connected to
+    ArrayList<String> chats = new ArrayList<>();
+
     User() {
         username = "";
         password = "";
         socket = null;
-        chats = null;
     }
-    
-    User(String username, String password) {
+
+    User(String username, String password, Socket socket) {
         this.username = username;
         this.password = password;
-    }
-    
-    User(String username, Socket socket) {
-        this.username = username;
         this.socket = socket;
+        System.out.println("Created new user");
     }
-    
-    //to user
-    public void sendUser(Socket socket) {
-        
-    }
-    //socket
-    
-    public Socket getSocket() {
-        return socket;
-    }
-    
-    public String getUsername() {
-        return username;
-    }
-    
+
     public boolean checkPassword(String password) {
         return this.password.equals(password);
     }
-    //set socket
-    
+
+    public void addChat(Chat chat) {
+        //get name XD LMAO
+        
+        for (int i = 0; i < chats.size(); i++) {
+            if (chat.getName().equals(chats.get(i))) {
+                return;
+            }
+        }
+        chats.add(chat.getName());
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public ArrayList<String> getChats() {
+        return chats;
+    }
+
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
-    
+
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    public void addChat(Chat chat) {
-        chats.add(chat);
+
+    public void setChats(ArrayList<String> chats) {
+        this.chats = chats;
     }
+
 }
