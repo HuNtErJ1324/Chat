@@ -40,12 +40,12 @@ public final class Server implements Serializable { //serialize everything excep
         try {
             users = new ArrayList<>();
             server = new ServerSocket(port);
+            popChats();
             while (true) {
                 System.out.println("Server listening on port " + port);
                 socket = server.accept();
                 System.out.println("User accepted");
                 out = new DataOutputStream(socket.getOutputStream());
-                popChats();
                 m = new Menu(socket, this);
                 t = new Thread(m);
                 t.start();

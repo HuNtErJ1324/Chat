@@ -18,7 +18,7 @@ public class Chat implements Serializable {
     transient Scanner input = new Scanner(System.in);
     String name;
     //ArrayList of all users connected to chat
-    ArrayList<User> users;
+    transient ArrayList<User> users;
     ArrayList<Message> messages;
 
     Chat(String name) {
@@ -76,6 +76,7 @@ public class Chat implements Serializable {
             chat = (Chat) in.readObject();
             in.close();
             file.close();
+            chat.users = new ArrayList<>();
             System.out.println("Chat has been loaded");
         } catch (IOException ex) {
             System.out.println("Chat load IOException");
