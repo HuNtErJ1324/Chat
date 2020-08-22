@@ -15,9 +15,9 @@ import java.util.*;
  *
  * @author peanu
  */
-//users arraylist not saving or loading
 //
-public class Server implements Serializable { //serialize everything except client
+//
+public final class Server implements Serializable { //serialize everything except client
 
     //users that use server
     ArrayList<User> users;
@@ -31,9 +31,9 @@ public class Server implements Serializable { //serialize everything except clie
     transient DataOutputStream out;
 
     public static void main(String[] args) {
-        //Server serve = new Server();
-        Server serve = Server.load();
-        serve.start();
+        Server serve = new Server();
+//        Server serve = Server.load();
+//        serve.start();
     }
 
     Server() {
@@ -101,7 +101,6 @@ public class Server implements Serializable { //serialize everything except clie
             System.out.println("Server has been saved");
         } catch (IOException ex) {
             System.out.println("Server save error");
-            ex.printStackTrace();
         }
     }
 
@@ -194,7 +193,6 @@ public class Server implements Serializable { //serialize everything except clie
                 }
             } catch (IOException e) {
                 System.out.println("Run error");
-                e.printStackTrace();
             }
         }
 
@@ -354,6 +352,8 @@ public class Server implements Serializable { //serialize everything except clie
                 } while (true);
             } catch (SocketException ex) {
                 chat.removeUser(user);
+                chat.save();
+                System.out.println("Server socket error");
             } catch (IOException e) {
                 System.out.println("Read run error");
             }

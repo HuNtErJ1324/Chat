@@ -13,17 +13,18 @@ import java.util.*;
  *
  * @author peanu
  */
-public class Message implements Serializable{
+public class Message implements Serializable {
+
     User user;
     String message;
     Date time;
-    
+
     Message() {
         user = null;
         message = "";
         time = new Date();
     }
-    
+
     Message(User user, String message) {
         this.user = user;
         this.message = message;
@@ -32,14 +33,14 @@ public class Message implements Serializable{
 
     @Override
     public String toString() {
-        return getDate() + " " +  user.getUsername() + " " + message;
+        return getDate() + " " + user.getUsername() + " " + message;
     }
-    
+
     public String getDate() {
         SimpleDateFormat ft = new SimpleDateFormat("HH/mm/ss");
         return ft.format(time);
     }
-        
+
     public User getUser() {
         return user;
     }
@@ -55,5 +56,5 @@ public class Message implements Serializable{
     public void setMessage(String message) {
         this.message = message;
     }
-   
+
 }

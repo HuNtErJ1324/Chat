@@ -40,7 +40,6 @@ public class User implements Serializable {
 
     public void addChat(Chat chat) {
         //get name XD LMAO
-        
         for (int i = 0; i < chats.size(); i++) {
             if (chat.getName().equals(chats.get(i))) {
                 return;

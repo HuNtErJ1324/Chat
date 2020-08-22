@@ -108,6 +108,9 @@ public class Chat implements Serializable {
 
                 } catch (IOException e) {
                     System.out.println("addMessage error");
+                } catch (NullPointerException ex) {
+                    users.remove(i--);
+                    ex.printStackTrace();
                 }
             }
         }

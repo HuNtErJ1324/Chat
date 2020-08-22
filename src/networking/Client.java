@@ -17,7 +17,7 @@ import java.util.Scanner;
 //new thread created when you enter chat to get chat messages
 public class Client {
 
-    final static String menu = "Choose option\n    1)Chats\n    2)Join\n    3)Create\n    4)Logout\n    5)Help\n>";
+    final static String MENU = "Choose option\n    1)Chats\n    2)Join\n    3)Create\n    4)Logout\n    5)Help\n>";
     int port = 8000;
     //static String host = "100.20.240.236";
     static String host = "localhost";
@@ -50,7 +50,7 @@ public class Client {
         try {
             int option;
             do {
-                System.out.print(menu);
+                System.out.print(MENU);
                 //input foolproofing
                 while (true) {
                     option = getInt();
@@ -215,7 +215,7 @@ public class Client {
                 System.out.println("Read run error");
             }
         }
-        
+
         public void stopThread() {
             running = false;
         }
