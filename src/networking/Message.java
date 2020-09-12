@@ -37,7 +37,7 @@ public class Message implements Serializable {
     }
 
     public String getDate() {
-        SimpleDateFormat ft = new SimpleDateFormat("HH/mm/ss");
+        SimpleDateFormat ft = new SimpleDateFormat("HH:mm:ss");
         return ft.format(time);
     }
 

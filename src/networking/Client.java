@@ -26,7 +26,6 @@ public class Client {
     DataOutputStream out;
     Socket socket;
     Scanner input = new Scanner(System.in);
-    String text = "";
 
     public static void main(String[] args) {
         Client client = new Client();
