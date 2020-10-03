@@ -5,6 +5,7 @@
  */
 package networking;
 
+import java.awt.Toolkit;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class Login extends javax.swing.JDialog {
             System.out.println("login constructor error");
         }
         this.getRootPane().setDefaultButton(submitJButton);
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/networking/logo.png"));
         this.setLocationRelativeTo(null);
     }
     
@@ -56,6 +58,7 @@ public class Login extends javax.swing.JDialog {
         usernameJTextField = new javax.swing.JTextField();
         passwordJPasswordField = new javax.swing.JPasswordField();
         submitJButton = new javax.swing.JButton();
+        loginStatusJLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -77,6 +80,8 @@ public class Login extends javax.swing.JDialog {
             }
         });
 
+        loginStatusJLabel.setForeground(java.awt.Color.red);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -95,7 +100,9 @@ public class Login extends javax.swing.JDialog {
                                 .addComponent(passwordJPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(109, 109, 109)
-                        .addComponent(submitJButton)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(submitJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(loginStatusJLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -111,7 +118,9 @@ public class Login extends javax.swing.JDialog {
                 .addComponent(passwordJPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(submitJButton)
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(loginStatusJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         pack();
@@ -122,6 +131,7 @@ public class Login extends javax.swing.JDialog {
         try {
             //returning user
             if (returningUserJRadioButton.isSelected()) {
+                loginStatusJLabel.setText("");
                 out.writeInt(1);
                 out.flush();
                 out.writeUTF(usernameJTextField.getText());
@@ -130,21 +140,24 @@ public class Login extends javax.swing.JDialog {
                 out.writeUTF(password);
                 out.flush();
                 String check = in.readUTF();
-                if (check.startsWith("incorrect")) {
-                    //TODO incorrect password message
+                if (!check.startsWith("incorrect")) {
                     this.dispose();
-                }
+                } else
+                    loginStatusJLabel.setText(check);
             } //new user
             else {
+                loginStatusJLabel.setText("");
                 out.writeInt(2);
                 out.flush();
-                User user;
                 out.writeUTF(usernameJTextField.getText());
                 out.flush();
-                String password = new String(passwordJPasswordField.getPassword());
-                out.writeUTF(password);
+                out.writeUTF(new String(passwordJPasswordField.getPassword()));
                 out.flush();
-                this.dispose();
+                String check = in.readUTF();
+                if (!check.startsWith("Username")) {
+                    this.dispose();
+                } else 
+                    loginStatusJLabel.setText(check);
             }
         } catch (IOException e) {
             System.out.println("Client side login error");
@@ -153,6 +166,7 @@ public class Login extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup;
+    private javax.swing.JLabel loginStatusJLabel;
     private javax.swing.JRadioButton newUserJRadioButton;
     private javax.swing.JPasswordField passwordJPasswordField;
     private javax.swing.JRadioButton returningUserJRadioButton;

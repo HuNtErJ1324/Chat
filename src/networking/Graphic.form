@@ -138,8 +138,10 @@
       <SubComponents>
         <Component class="javax.swing.JTextArea" name="chatJTextArea">
           <Properties>
+            <Property name="editable" type="boolean" value="false"/>
             <Property name="columns" type="int" value="20"/>
             <Property name="rows" type="int" value="5"/>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
         </Component>
       </SubComponents>

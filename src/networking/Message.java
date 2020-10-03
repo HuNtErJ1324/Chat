@@ -33,11 +33,11 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return getDate() + " " + user.getUsername() + " " + message;
+        return getDate() + " " + user.getUsername() + ": " + message;
     }
 
     public String getDate() {
-        SimpleDateFormat ft = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat ft = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
         return ft.format(time);
     }
 

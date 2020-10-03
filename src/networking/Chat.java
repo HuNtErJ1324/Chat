@@ -14,6 +14,7 @@ import java.util.*;
  * @author peanu
  */
 public class Chat implements Serializable {
+
     private final int LATEST_MESSAGES = 30;
 
     transient Scanner input = new Scanner(System.in);
@@ -32,6 +33,11 @@ public class Chat implements Serializable {
 
     //add user to chat
     public void addUser(User user) {
+        for (int i = 0; i < users.size(); i++) {
+            if (user.equals(users.get(i))) {
+                return;
+            }
+        }
         users.add(user);
     }
 
@@ -100,22 +106,19 @@ public class Chat implements Serializable {
     }
 
     public void addMessage(Message message) {
-        
         messages.add(message);
         for (int i = 0; i < users.size(); i++) {
-            if (!users.get(i).equals(message.getUser())) {
-                try {
-                    DataOutputStream out = new DataOutputStream(users.get(i).getSocket().getOutputStream());
-                    out.writeInt(3);
-                    out.flush();
-                    out.writeUTF(name + " " + message.toString());
-                    out.flush();
-                } catch (IOException e) {
-                    System.out.println("addMessage error");
-                } catch (NullPointerException ex) {
-                    users.remove(i--);
-                    ex.printStackTrace();
-                }
+            try {
+                DataOutputStream out = new DataOutputStream(users.get(i).getSocket().getOutputStream());
+                out.writeInt(3);
+                out.flush();
+                out.writeUTF(name + " " + message.toString());
+                out.flush();
+            } catch (IOException e) {
+                System.out.println("addMessage error");
+            } catch (NullPointerException ex) {
+                users.remove(i--);
+                ex.printStackTrace();
             }
         }
     }
@@ -132,19 +135,20 @@ public class Chat implements Serializable {
             }
         }
     }
-    
+
     public ArrayList<String> getLatest() {
         List<Message> latest;
-        if(messages.size() >= LATEST_MESSAGES) {
+        if (messages.size() >= LATEST_MESSAGES) {
             latest = messages.subList(messages.size() - LATEST_MESSAGES, messages.size());
-        }
-        else {
+        } else {
             latest = messages;
         }
         ArrayList<String> latestMessages = new ArrayList<>();;
         for (int i = 0; i < latest.size(); i++) {
             latestMessages.add(latest.get(i).toString());
+            System.out.println(latest.get(i).toString());
         }
+        System.out.println(latestMessages);
         return latestMessages;
     }
 }

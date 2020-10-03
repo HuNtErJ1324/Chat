@@ -15,10 +15,7 @@ import javax.swing.*;
  *
  * @author peanu
  */
-//join is a thread
-//TODO: thread for reading stuff from chats user is not in
-//paths for server input
-//all input separated by spaces
+//TODO ADD ICON
 public class Graphic extends javax.swing.JFrame {
 
     int port = 8000;
@@ -46,8 +43,11 @@ public class Graphic extends javax.swing.JFrame {
             login.setVisible(true);
             this.setVisible(true);
             String chatsCheck = in.readUTF();
+            System.out.println(chatsCheck);
             if (!chatsCheck.equals("No chats")) {
-                String[] chats = chatsCheck.split(":");
+                String[] chats = chatsCheck.substring(1).split("#");
+                System.out.println(chats);
+                model.removeAllElements();
                 for (int i = 0; i < chats.length; i++) {
                     String[] chatSplit = chats[i].split("\n");
                     model.addElement(chatSplit[0]);
@@ -58,15 +58,11 @@ public class Graphic extends javax.swing.JFrame {
                     chatN.add(chatM);
                 }
                 chatJList.setSelectedIndex(0);
-                //puts in first chat messages 
-                for (int i = 0; i < chatN.get(0).size(); i++) {
-                    chatJTextArea.append(chatN.get(0).get(i));
-                }
             }
+            this.getRootPane().setDefaultButton(sendJButton);
+            this.setIconImage(Toolkit.getDefaultToolkit().getImage("src/networking/logo.png"));
             this.setLocationRelativeTo(null);
             Read r = new Read(socket);
-            Thread t = new Thread(r);
-            t.start();
         } catch (IOException e) {
             System.out.println("oopsies");
         }
@@ -112,8 +108,10 @@ public class Graphic extends javax.swing.JFrame {
             }
         });
 
+        chatJTextArea.setEditable(false);
         chatJTextArea.setColumns(20);
         chatJTextArea.setRows(5);
+        chatJTextArea.setFocusable(false);
         jScrollPane2.setViewportView(chatJTextArea);
 
         textJTextField.setToolTipText("");
@@ -208,8 +206,10 @@ public class Graphic extends javax.swing.JFrame {
             out.flush();
             text = textJTextField.getText();
             //TODO try to add timestamp and username
+            System.out.println(chatJList.getSelectedValue() + " " + text);
             out.writeUTF(chatJList.getSelectedValue() + " " + text);
             out.flush();
+            textJTextField.setText("");
         } catch (IOException e) {
             System.out.println("sendJButton error");
         }
@@ -229,15 +229,15 @@ public class Graphic extends javax.swing.JFrame {
     }//GEN-LAST:event_joinJButtonActionPerformed
 
     private void createJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createJButtonActionPerformed
-        // TODO add your handling code here:
         try {
+            if (newChatJTextField.getText().matches(".*([\\\\\\/\\:\\*\\?\"\\<\\>\\|]).*")) {
+                joinStatusjLabel.setText("No special characters");
+                return;
+            }
             out.writeInt(2);
             out.flush();
             out.writeUTF(newChatJTextField.getText());
             out.flush();
-            //TODO: add foolproofing
-            model.addElement(newChatJTextField.getText());
-            newChatJTextField.setText("");
         } catch (IOException e) {
             System.out.println("client create error");
         }
@@ -245,14 +245,14 @@ public class Graphic extends javax.swing.JFrame {
 
     private void chatJListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_chatJListValueChanged
         // TODO add your handling code here:
-        System.out.println(chatJList.getSelectedValue());
+        System.out.print(chatJList.getSelectedValue());
         chatJTextArea.setText("");
         for (int i = 0; i < chatN.size(); i++) {
             if (chatN.get(i).get(0).equals(chatJList.getSelectedValue())) {
                 notif.remove(chatN.get(i).get(0));
                 chatJList.setCellRenderer(new SelectedListCellRenderer(notif));
-                for (int j = 1; j <= chatN.get(i).size(); j++) {
-                    chatJTextArea.append(chatN.get(i).get(j));
+                for (int j = 1; j < chatN.get(i).size(); j++) {
+                    chatJTextArea.append(chatN.get(i).get(j) + "\n");
                 }
             }
         }
@@ -313,7 +313,6 @@ public class Graphic extends javax.swing.JFrame {
                 in = new DataInputStream(socket.getInputStream());
                 do {
                     int option = in.readInt();
-                    System.out.println(option + "yes");
                     switch (option) {
                         case 2:
                             join(in.readUTF());
@@ -339,7 +338,7 @@ public class Graphic extends javax.swing.JFrame {
                 }
             }
             if (chatJList.getSelectedValue().equals(name)) {
-                chatJTextArea.append(e);
+                chatJTextArea.append(chat[1] + "\n");
             } else {
                 notif.add(name);
                 chatJList.setCellRenderer(new SelectedListCellRenderer(notif));
@@ -347,24 +346,24 @@ public class Graphic extends javax.swing.JFrame {
         }
 
         public void join(String x) {
-            //add new chat to the chat jlist and add new array list to chatN
-            System.out.println(x + "hi");
-            //display the texts
             if (x.startsWith("No")) {
                 joinStatusjLabel.setText(x);
                 return;
             } else {
                 joinStatusjLabel.setText("");
-                chatJTextArea.setText(x);
                 String name = newChatJTextField.getText();
                 model.addElement(name);
                 newChatJTextField.setText("");
-                String[] chat = x.split("\n");
                 ArrayList<String> chatM = new ArrayList<>();
-                for (int i = 0; i < chat.length; i++) {
-                    chatM.add(chat[i]);
+                chatM.add(name);
+                if (!x.isEmpty()) {
+                    String[] chat = x.split("\n");
+                    for (int i = 0; i < chat.length; i++) {
+                        chatM.add(chat[i]);
+                    }
                 }
                 chatN.add(chatM);
+                chatJList.setSelectedIndex(model.getSize() - 1);
             }
         }
     }

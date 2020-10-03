@@ -165,24 +165,24 @@ public final class Server implements Serializable { //serialize everything excep
                 ArrayList<String> chats = user.getChats();
                 for (int i = 0; i < chats.size(); i++) {
                     getChat(chats.get(i)).addUser(user);
-                } 
+                }
                 out.writeUTF(initialChatMessages(user));
                 out.flush();
                 int option;
                 do {
                     option = in.readInt();
-                    System.out.println(option + "I love options");
                     switch (option) {
                         case 1:
                             //join a chat
-                            joinChat(user);
+                            joinChat(user, in.readUTF());
                             break;
                         case 2:
                             //create a chat
-                            create(user);
+                            String name = create(user);
+                            joinChat(user, name);
                             break;
                         case 3:
-                            //read message
+                            //read message 
                             read(user);
                             break;
                     }
@@ -202,14 +202,15 @@ public final class Server implements Serializable { //serialize everything excep
             try {
                 StringBuilder s = new StringBuilder();
                 ArrayList<String> uChats = user.getChats();
+                System.out.println("User Chats" + uChats);
                 if (uChats.isEmpty()) {
                     return "No chats";
                 } else {
                     for (int i = 0; i < uChats.size(); i++) {
-                        s.append(":").append(uChats.get(i)).append("\n");
+                        s.append("#").append(uChats.get(i)).append("\n");
                         ArrayList<String> lm = getChat(uChats.get(i)).getLatest();
                         for (int j = 0; j < lm.size(); j++) {
-                            s.append(lm.get(i)).append("\n");
+                            s.append(lm.get(j)).append("\n");
                         }
                     }
                     return s.toString();
@@ -235,17 +236,25 @@ public final class Server implements Serializable { //serialize everything excep
                         getUser(username).setSocket(socket);
                         return getUser(username);
                     } else {
-                        out.writeUTF("incorrect");
+                        out.writeUTF("incorrect password or username");
                         out.flush();
-                        login();
+                        return login();
                     }
                 } //new user
                 else if (d == 2) {
-                    User user;
+                    User user = null;
                     String username = in.readUTF();
                     String password = in.readUTF();
-                    user = new User(username, password, socket);
-                    users.add(user);
+                    if (checkUsername(username)) {
+                        user = new User(username, password, socket);
+                        users.add(user);
+                        out.writeUTF("Welcome");
+                        out.flush();
+                    } else {
+                        out.writeUTF("Username is taken");
+                        out.flush();
+                        return login();
+                    }
                     return user;
                 }
             } catch (IOException e) {
@@ -269,39 +278,53 @@ public final class Server implements Serializable { //serialize everything excep
             return false;
         }
 
-        public void joinChat(User user) {
+        public boolean checkUsername(String username) {
+            for (int i = 0; i < users.size(); i++) {
+                if (users.get(i).getUsername().equals(username)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public void joinChat(User user, String name) {
             try {
-                String name;
-                name = in.readUTF();
-                System.out.println(name);
                 if (getChat(name) == null) {
                     out.writeUTF("No such chat");
                     out.flush();
                     return;
                 } else {
+                    System.out.println("User has entered Chat");
                     getChat(name).addUser(user);
                     user.addChat(getChat(name));
-                    System.out.println("User has entered Chat");
                 }
                 out.writeInt(2);
                 out.flush();
-                out.writeUTF(name + "\n" + getChat(name).getLatest());
+                StringBuilder s = new StringBuilder();
+                ArrayList<String> lm = getChat(name).getLatest();
+                for (int j = 0; j < lm.size(); j++) {
+                    s.append(lm.get(j)).append("\n");
+                }
+                out.writeUTF(s.toString());
                 out.flush();
             } catch (IOException e) {
                 System.out.println("Server enterChat error");
             }
         }
 
-        public void create(User user) {
+        public String create(User user) {
+            String name = "";
             try {
-                String name = in.readUTF();
+                name = in.readUTF();
                 Chat chat = new Chat(name);
                 chat.save();
+                chat.addUser(user);
                 chats.add(chat);
                 user.addChat(chat);
             } catch (IOException e) {
                 System.out.println("Server create error");
             }
+            return name;
         }
 
         public void logout(User user) {
@@ -326,47 +349,4 @@ public final class Server implements Serializable { //serialize everything excep
             }
         }
     }
-
-    //Read class does the reading
-//    private static class Read implements Runnable {
-//
-//        DataInputStream in;
-//        Socket socket;
-//        Chat chat;
-//        User user;
-//        String text;
-//
-//        Read(Socket socket, Chat chat, User user) {
-//            this.socket = socket;
-//            this.chat = chat;
-//            this.user = user;
-//            text = "";
-//        }
-//
-//        @Override
-//        public void run() {
-//            try {
-//                in = new DataInputStream(socket.getInputStream());
-//                do {
-//                    text = in.readUTF();
-//                    if (text.equals("/back")) {
-//                        chat.removeUser(user);
-//                        chat.save();
-//                        break;
-//                    }
-//                    Message message = new Message(user, text);
-//                    //TODO add to people who "have" the chat in side bar
-//                    chat.addMessage(message);
-//                    chat.save();
-//
-//                } while (true);
-//            } catch (SocketException ex) {
-//                chat.removeUser(user);
-//                chat.save();
-//                System.out.println("Server socket error");
-//            } catch (IOException e) {
-//                System.out.println("Read run error");
-//            }
-//        }
-//    }
 }
